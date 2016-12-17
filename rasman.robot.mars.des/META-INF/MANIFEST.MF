@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: rasman.robot.mars.des
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: rasman.robot.mars.des; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext,
+ org.eclipse.xtext.xbase,
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.emf.ecore,
+ org.eclipse.xtext.xbase.lib,
+ org.antlr.runtime,
+ org.eclipse.xtext.util,
+ org.eclipse.xtend.lib,
+ org.eclipse.emf.common
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: rasman.robot.mars.des.dsl.util,
+ rasman.robot.mars.des.validation,
+ rasman.robot.mars.des.services,
+ rasman.robot.mars.des.dsl,
+ rasman.robot.mars.des.scoping,
+ rasman.robot.mars.des.parser.antlr,
+ rasman.robot.mars.des.generator,
+ rasman.robot.mars.des,
+ rasman.robot.mars.des.serializer,
+ rasman.robot.mars.des.dsl.impl,
+ rasman.robot.mars.des.parser.antlr.internal
+Import-Package: org.apache.log4j

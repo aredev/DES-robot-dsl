@@ -1,0 +1,153 @@
+grammar rasman.robot.mars.des.Dsl with org.eclipse.xtext.common.Terminals
+
+generate dsl "http://www.robot.rasman/mars/des/Dsl"
+
+/*
+ * A mission consists of a number of behaviors
+ */
+Mission: 'Mission:' tasks += Task+
+;
+
+/*
+ * Mission DetectColourLakeAndMeasure
+ * Task findLake 
+ * Uses ColorSensor On New DetectedColor is: [kleuren] Do: Measure 
+ * 
+ * Mission DetectRocksAndMeasure
+ * Task findRock
+ * Uses TouchSensor On TouchedSide [Any] Do: Measure 
+ * 
+ * Mission CleanUpLightWeightRocks
+ * Task pushRocks
+ * Uses TouchSensor On TouchedSide [Any] Do: DriveToEdge 
+ * Not AvoidObjects
+ * 
+ * [Optional]
+ * Mission ParkInCorner
+ * Task findEdge
+ * Do: DriveToEdge Do: TurnLeft Do: DriveToEdge Do: Stop 
+ * 
+ */
+
+
+/*
+ * A behavior consists of a name, an optional type (in case of driving), an optional priority
+ * and a take control definition.
+ */
+Task: 'Task:' name = ID
+	('Uses:' sensor = SensorType)?	//Optional value
+	('Do:' action += Actions)+
+	('For' 'Max:' nrOfTimes = INT 'Times')? //Specify a maximum number of times an action is allowed to be performed. Uses as a method to know when to stop a behavior.
+	('Not:' ignoreBehavior = Ignorables)?
+	('ExpiresAfter:' time = INT timeunit = timeUnitValue)?  
+;
+
+/**
+ * Wrapper for time unit
+ */
+timeUnitValue:
+	unit = timeUnit
+;
+
+/**
+ * Defines the possible timeunits for the expiration time
+ */
+enum timeUnit:
+	SECONDS = "s" |
+	MILISECONDS = "ms"
+;
+
+Ignorables:
+	AVOID_OBJECTS = "AvoidObjects"
+;
+
+SensorType:
+	ColorSensor | 
+	TouchSensor | 
+	UltrasonicSensor 
+;
+
+ColorSensor:
+	'ColorSensor' 'On' (distinct ?= 'New')? 'DetectedColor' 'is:' key = ColorValue  |
+	'ColorSensor' 'On' (distinct ?= 'New')? 'DetectedColors' 'are:' (keys += ColorValue)+   
+;
+
+TouchSensor: 
+	'TouchSensor' 'On' 'TouchedSide:' key = TouchSensorSides 
+;
+
+UltrasonicSensor:
+	'USensor' 'On' 'Distance:' comparator = CompareOperator distance = DECIMAL
+;
+
+terminal DECIMAL: INT '.' INT;
+
+
+enum TouchSensorSides:
+	LEFT = "LEFT" |
+	RIGHT = "RIGHT" |
+	BOTH = "BOTH" |
+	ANY = "ANY" 
+;
+
+/*
+ * Actions that can be performed
+ */
+enum Actions:
+	ROTATE_L = "ROTATELEFT" |
+	ROTATE_R = "ROTATERIGHT" |
+	DRIVE_FORWARD = "DRIVEFORWARD" |
+	DRIVE_BACKWARD = "DRIVEBACKWARD" |
+	STOP_DRIVING = "STOP" |
+	TURN_AROUND = "TURNAROUND" |
+	BEEP = "BEEP" |
+	MEASURE = "MEASURE" |
+	DRIVETOEDGE = "DRIVETOEDGE" 
+;
+
+
+/*
+ * Wind directions
+ */
+enum Directions:
+	N = "N" |
+	NE ="NE" |
+	E = "E" |
+	SE = "SE" | 
+	S = "S" |
+	SW = "SW" |
+	W = "W" |
+	NW = "NW"
+;
+
+ColorValue:
+	color = Colors
+;
+
+/*
+ * Predefined colors by LEJOS
+ */
+enum Colors:
+	BLACK = "BLACK" |
+	BLUE = "BLUE" |
+	CYAN = "CYAN" |
+	DARK_GRAY = "DARK_GRAY" | 
+	GRAY = "GRAY" |
+	GREEN = "GREEN" | 
+	LIGHT_GRAY = "LIGHT_GRAY" | 
+	MAGENTA = "MAGENTA" |
+	ORANGE = "ORANGE" | 
+	PINK = "PINK" | 
+	RED = "RED" |
+	WHITE = "WHITE" |
+	YELLOW = "YELLOW"
+;
+
+enum CompareOperator:
+	EQ = '==' |
+	NEQ = '!=' |
+	GEQ = '>=' |
+	G = '>' |
+	LEQ = '<=' |
+	L = '<'
+;
